@@ -194,47 +194,49 @@ console.log(`✅ Removed ${queueId.length} movies`);
 // console.log(`✅ Removed ${queueId.length} completed movies`);
 
 // }
+
+
+//---------------------------------------------------
+
 //removing stopped movies
-// async function removingStoppedMOvies(){
-//   console.log('🔍started to removing the stopped movies')
-//  const responce =  await axios.get(`${ip}/api/v3/queue`,{
-//          headers: {
-//         "X-Api-Key": api
-//       },
-//       params: {
-//         page: 1,
-//         pageSize: 500,
-//         sortDirection: "default",
-//         includeUnknownMovieItems: true,
-//         includeMovie: true,
-//         protocol: "torrent",
-//       }
-//     })
-//     const queueId=[]
-//     for (const value of responce.data.records){
-//       if(value.status == 'paused'){
-//         queueId.push(value.id)
-//         console.log(value.title);
-//        await sendTelegramMessage(value.title)
-//       }
-//     }
+async function removingStoppedMOvies(){
+  console.log('🔍started to removing the stopped movies')
+ const responce =  await axios.get(`${ip}/api/v3/queue`,{
+         headers: {
+        "X-Api-Key": api
+      },
+      params: {
+        page: 1,
+        pageSize: 500,
+        sortDirection: "default",
+        includeUnknownMovieItems: true,
+        includeMovie: true,
+        protocol: "torrent",
+      }
+    })
+    const queueId=[]
+    for (const value of responce.data.records){
+      if(value.status == 'paused'){
+        queueId.push(value.id)
+        console.log(value.title);
+       await sendTelegramMessage(value.title)
+      }
+    }
 
-//  if(!queueId.length){
-// console.log('✅ no movies are paused to remove')
-// return;
-//  }
+ if(!queueId.length){
+console.log('✅ no movies are paused to remove')
+return;
+ }
 
-//  console.log('🗑️ deleteing the paused moovies');
-//  await delay(1000,true)
-//  await fileDelete(queueId);
+ console.log('🗑️ deleteing the paused moovies');
+ await delay(1000,true)
+ await fileDelete(queueId);
 
-//  console.log(`✅ Removed ${queueId.length} paused movies`);
+ console.log(`✅ Removed ${queueId.length} paused movies`);
 
 
     
-// }
-
-
+}
 
 //removing the stalled movies ....................
 
