@@ -70,130 +70,9 @@ async function fileDelete(queueId){
       }
 })
 console.log(`✅ Removed ${queueId.length} movies`);
+await sendTelegramMessage(`✅ Removed ${queueId.length} movies`)
 }
 
-
-
-// removing movies that are removed from importlist
-// async function removedMoviesDelete(){
-//      console.log("🔍 Removing movies that are removed from import list");
-
-//     const responce =  await axios.get(`${ip}/api/v3/queue`,{
-//          headers: {
-//         "X-Api-Key": api
-//       },
-//       params: {
-//         page: 1,
-//         pageSize: 500,
-//         sortDirection: "default",
-//         includeUnknownMovieItems: true,
-//         includeMovie: true,
-//         protocol: "torrent",
-//       }
-//     })
-//    const queueId = [];
-//     for (const value of responce.data.records){
-
-//         for (const value2 of value.languages){
-//             if(value2.name=='Unknown'){
-//                 queueId.push(value.id)
-//                 console.log(`🗑️ ${value.title}`);
-//                await sendTelegramMessage(`🗑️ ${value.title}`)
-//             }
-//         }
-//     }
-
-//       if (!queueId.length) {
-//     console.log("✅ No movies to remove (Unknown language)");
-//     return;
-//   }
-
-//      console.log(queueId)
-
-
-
-// await axios.delete(`${ip}/api/v3/queue/bulk`,{
-//     headers: {
-//         "X-Api-Key": api
-//       },
-//       params:{
-//         removeFromClient:true,
-//         blocklist:false,
-//         skipRedownload:false,
-//         changeCategory:false
-//       },
-//       data:{
-//         ids:queueId,
-//       }
-// })
-
-//  console.log(`✅ Removed ${queueId.length} movies`);
-
-// }
-
-
-
-//Removing completed movies with title mismatch
-
-// async function removedCompletedMovies(){
-
-//   console.log("🔍 Removing completed movies with title mismatch");
-//     const responce =  await axios.get(`${ip}/api/v3/queue`,{
-//          headers: {
-//         "X-Api-Key": api
-//       },
-//       params: {
-//         page: 1,
-//         pageSize: 500,
-//         sortDirection: "default",
-//         includeUnknownMovieItems: true,
-//         includeMovie: true,
-//         protocol: "torrent",
-
-//       }
-//     })
-
-// const queueId=[];
-
-// try {
- 
-//   for (const value of responce.data.records){ 
-
-//   if(value?.statusMessages?.[0]?.messages?.[0] == 'Movie title mismatch, automatic import is not possible. Manual Import required.') {
-//        queueId.push(value.id)
-//        console.log(`🗑️ ${value.title}`);
-//        await sendTelegramMessage(`🗑️ ${value.title}`)
-//   }
-// }
-
-//   if (!queueId.length) {
-//     console.log("✅ No completed movies to remove");
-//     return;
-//   }
-
-// } catch (error) {
-//   console.error(error)
-// }
-
-
-
-// await axios.delete(`${ip}/api/v3/queue/bulk`,{
-//     headers: {
-//         "X-Api-Key": api
-//       },
-//       params:{
-//         removeFromClient:true,
-//         blocklist:false,
-//         skipRedownload:false,
-//         changeCategory:false
-//       },
-//       data:{
-//         ids:queueId,
-//       }
-// })
-// console.log(`✅ Removed ${queueId.length} completed movies`);
-
-// }
 
 
 //---------------------------------------------------
@@ -201,6 +80,7 @@ console.log(`✅ Removed ${queueId.length} movies`);
 //removing stopped movies
 async function removingStoppedMOvies(){
   console.log('🔍started to removing the stopped movies')
+  await sendTelegramMessage('🔍started to removing the stopped movies')
  const responce =  await axios.get(`${ip}/api/v3/queue`,{
          headers: {
         "X-Api-Key": api
@@ -219,23 +99,17 @@ async function removingStoppedMOvies(){
       if(value.status == 'paused'){
         queueId.push(value.id)
         console.log(value.title);
-       await sendTelegramMessage(value.title)
       }
     }
 
  if(!queueId.length){
 console.log('✅ no movies are paused to remove')
+await sendTelegramMessage('✅ no movies are paused to remove')
 return;
  }
 
- console.log('🗑️ deleteing the paused moovies');
  await delay(1000,true)
- await fileDelete(queueId);
-
- console.log(`✅ Removed ${queueId.length} paused movies`);
-
-
-    
+ await fileDelete(queueId);    
 }
 
 //removing the stalled movies ....................
@@ -277,9 +151,9 @@ async function qbitorrentStalledFileInfo(downloadId){
 }
 
 
-
 async function removingStalledMoviesFailedMetadataDownload(){
-   console.log('🔍started to removing the delayed movies')
+   console.log('🔍started to removing Stalled and FailedMetadata Download movies')
+   await sendTelegramMessage('🔍started to removing Stalled and FailedMetadata Download movies')
  const {data} =  await axios.get(`${ip}/api/v3/queue`,{
          headers: {
         "X-Api-Key": api
@@ -312,6 +186,7 @@ for (const value of data.records){
 
 if(!queueId.length){
   console.log('No stalled and failed metadata movies')
+  await sendTelegramMessage('No stalled and failed metadata movies')
   return
 }
 
@@ -320,7 +195,8 @@ await fileDelete(queueId)
 }
 
 async function removeExeRarfiles(){
-   console.log("🔍 Removing movies that are removed from import list");
+   console.log("🔍 Removing movies that has exe,rar or iso files");
+   await sendTelegramMessage("🔍 Removing movies that has exe,rar or iso files")
 
     const {data} =  await axios.get(`${ip}/api/v3/queue`,{
          headers: {
@@ -347,6 +223,7 @@ if (blockedRegex.test(value.title)) {
 await delay(300,true)
 if(!queueId.length){
   console.log('no files contian exe rar..etc files')
+  await sendTelegramMessage('no files contian exe rar..etc files')
   return;
 }
 await fileDelete(queueId);
@@ -365,9 +242,6 @@ async function main() {
     await removingStoppedMOvies();
     await delay(10000)
     await removingStalledMoviesFailedMetadataDownload()
-    
-  
-  
 
     console.log("🏁 Cleanup completed successfully");
    await sendTelegramMessage("🏁 Cleanup completed successfully")
