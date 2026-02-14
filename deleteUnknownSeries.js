@@ -78,5 +78,6 @@ export async function deleteUnknownSeries (){
     for (const value of responce.data.records){
      queueId.push(value.episodeId)
     }
+    await delay(3000,true)
     await getepisodeDetails(queueId)
 } 
