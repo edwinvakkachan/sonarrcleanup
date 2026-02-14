@@ -4,7 +4,9 @@ import axios from 'axios';
 import { wrapper } from "axios-cookiejar-support";
 import { CookieJar } from "tough-cookie";
 
+import {deleteRemovedSeries} from './deleteRemovedseries.js'
 
+import {deleteUnknownSeries} from './deleteUnknownSeries.js'
 
 
 const api = process.env.API;
@@ -264,11 +266,15 @@ async function main() {
 
     await login();
     await delay(5000)
-   await removeExeRarfiles();
+    await removeExeRarfiles();
     await delay(10000)
     await removingStoppedMOvies();
     await delay(10000)
     await removingStalledMoviesFailedMetadataDownload()
+    await delay(10000)
+    await deleteRemovedSeries ();
+    await delay(10000)
+    await deleteUnknownSeries ()
 
     console.log("🏁 Cleanup completed successfully");
    await sendTelegramMessage("🏁 Cleanup completed successfully")
