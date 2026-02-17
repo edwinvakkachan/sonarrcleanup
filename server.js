@@ -171,8 +171,8 @@ for (const value of data.records){
 }
 
 if(!queueId.length){
-  console.log('No stalled and failed metadata movies')
-  await sendTelegramMessage('No stalled and failed metadata movies')
+  console.log('No stalled and failed metadata Episodes')
+  await sendTelegramMessage('No stalled and failed metadata Episodes')
   return
 }
 

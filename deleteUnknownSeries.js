@@ -6,6 +6,7 @@ const ip = process.env.IP;
 const api = process.env.API;
 
 import {sendTelegramMessage} from './sendTelegram.js'
+import { delay } from './delay.js';
 
 async function fileDelete(queueId){
    await axios.delete(`${ip}/api/v3/queue/bulk`,{
