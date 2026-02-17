@@ -34,8 +34,8 @@ async function fileDelete(queueId){
         ids:queueId,
       }
 })
-console.log(`✅ Removed ${queueId.length} movies`);
-await sendTelegramMessage(`✅ Removed ${queueId.length} movies`)
+console.log(`✅ Removed ${queueId.length} Episodes`);
+await sendTelegramMessage(`✅ Removed ${queueId.length} Episodes`)
 }
 
 
@@ -59,8 +59,8 @@ const queueId =[];
     }
 
     if(queueId.length){
-        console.log('no series need to manually remove ')
-        await sendTelegramMessage('no series need to manually remove')
+        console.log('no Episodes need to manually remove ')
+        await sendTelegramMessage('no Episodes need to manually remove')
     }
 
 await fileDelete(queueId);
@@ -69,8 +69,8 @@ await fileDelete(queueId);
 
 
  export async function deleteRemovedSeries (){
-    console.log('🔍started to removing the manually deleted series')
-  await sendTelegramMessage('🔍started to removing the manually deleted series')
+    console.log('🔍started to removing the manually deleted Episodes')
+  await sendTelegramMessage('🔍started to removing the manually deleted Episodes')
  const responce =  await axios.get(`${ip}/api/v3/queue`,{
          headers: {
         "X-Api-Key": api

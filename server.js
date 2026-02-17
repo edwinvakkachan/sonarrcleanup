@@ -5,14 +5,15 @@ import { wrapper } from "axios-cookiejar-support";
 import { CookieJar } from "tough-cookie";
 
 import {deleteRemovedSeries} from './deleteRemovedseries.js'
-
 import {deleteUnknownSeries} from './deleteUnknownSeries.js'
+import {sendTelegramMessage} from './sendTelegram.js'
+import {delay} from './delay.js'
+import{triggerHAWebhook} from './webhook.js'
+
 
 
 const api = process.env.API;
 const ip = process.env.IP;
-const BOT_TOKEN = process.env.TG_BOT_TOKEN;
-const CHAT_ID = process.env.TG_CHAT_ID;
 const qbitTime = process.env.QBIT_TIME;
 const qbitIp = process.env.QBITIP;
 const qbitUserName= process.env.QBITUSER;
@@ -35,27 +36,8 @@ if (!api || !ip) {
   console.error("❌ Missing API or IP environment variables");
   process.exit(1);
 }
-//telgram bot message
-async function sendTelegramMessage(text) {
-  const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-  await axios.post(url, {
-    chat_id: CHAT_ID,
-    text: text
-  });
-}
 
-//delay function 
 
-async function delay(ms,noLog) {
-  if(noLog){
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-  else{
-console.log(`Waiting...${ms} sec`);
-  return new Promise(resolve => setTimeout(resolve, ms));
-  }
-   
-}
 // function to delete files
 async function fileDelete(queueId){
    await axios.delete(`${ip}/api/v3/queue/bulk`,{
@@ -72,8 +54,8 @@ async function fileDelete(queueId){
         ids:queueId,
       }
 })
-console.log(`✅ Removed ${queueId.length} movies`);
-await sendTelegramMessage(`✅ Removed ${queueId.length} movies`)
+console.log(`✅ Removed ${queueId.length} Episodes`);
+await sendTelegramMessage(`✅ Removed ${queueId.length} Episodes`)
 }
 
 
@@ -82,8 +64,8 @@ await sendTelegramMessage(`✅ Removed ${queueId.length} movies`)
 
 //removing stopped movies
 async function removingStoppedMOvies(){
-  console.log('🔍started to removing the stopped movies')
-  await sendTelegramMessage('🔍started to removing the stopped movies')
+  console.log('🔍started to removing the stopped Episodes')
+  await sendTelegramMessage('🔍started to removing the stopped Episodes')
  const responce =  await axios.get(`${ip}/api/v3/queue`,{
          headers: {
         "X-Api-Key": api
@@ -106,8 +88,8 @@ async function removingStoppedMOvies(){
     }
 
  if(!queueId.length){
-console.log('✅ no movies are paused to remove')
-await sendTelegramMessage('✅ no movies are paused to remove')
+console.log('✅ no Episodes are paused to remove')
+await sendTelegramMessage('✅ no Episodes are paused to remove')
 return;
  }
 
@@ -155,8 +137,8 @@ async function qbitorrentStalledFileInfo(downloadId){
 
 
 async function removingStalledMoviesFailedMetadataDownload(){
-   console.log('🔍started to removing Stalled and FailedMetadata Download movies')
-   await sendTelegramMessage('🔍started to removing Stalled and FailedMetadata Download movies')
+   console.log('🔍started to removing Stalled and FailedMetadata Download Episodes')
+   await sendTelegramMessage('🔍started to removing Stalled and FailedMetadata Download Episodes')
  const {data} =  await axios.get(`${ip}/api/v3/queue`,{
          headers: {
         "X-Api-Key": api
@@ -182,6 +164,7 @@ for (const value of data.records){
   }
   if(await qbitorrentStalledFileInfo(value.downloadId)){
     console.log('found: ',value.title)
+    await sendTelegramMessage(value.title)
     queueId.push(value.id)
 
   }
@@ -198,8 +181,8 @@ await fileDelete(queueId)
 }
 
 async function removeExeRarfiles(){
-   console.log("🔍 Removing movies that has exe,rar or iso files");
-   await sendTelegramMessage("🔍 Removing movies that has exe,rar or iso files")
+   console.log("🔍 Removing Episodes that has exe,rar or iso files");
+   await sendTelegramMessage("🔍 Removing Episodes that has exe,rar or iso files")
 
     const {data} =  await axios.get(`${ip}/api/v3/queue`,{
          headers: {
@@ -218,8 +201,9 @@ async function removeExeRarfiles(){
     const queueId=[];
 for (const value of data.records){
 
-if (blockedRegex.test(value.title)) {
+if (blockedRegex.test(value.outputPath)) {
   console.log('❌ Blocked file detected:', value.title);
+  await sendTelegramMessage(value.title)
   queueId.push(value.id)
 }
 }
@@ -234,30 +218,6 @@ await fileDelete(queueId);
 }
 
 
-async function triggerHAWebhook(errorMessage) {
-  try {
-    await axios.post(
-      `${homeassistantWebHook}`,
-      {
-        status: "error",
-        message: errorMessage,
-        time: new Date().toISOString()
-      },
-      {
-        headers: {
-          "Content-Type": "application/json"
-        },
-        timeout: 5000
-      }
-    );
-
-    console.log("🏠 Home Assistant sonarr webhook triggered");
-    await sendTelegramMessage("🏠 Home Assistant sonarr webhook triggered")
-  } catch (err) {
-    console.error("⚠️ Failed to trigger HA webhook:", err.message);
-    await sendTelegramMessage("⚠️ Failed to trigger HA sonarr webhook")
-  }
-}
 
 async function main() {
   try {

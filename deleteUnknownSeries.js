@@ -22,8 +22,8 @@ async function fileDelete(queueId){
         ids:queueId,
       }
 })
-console.log(`✅ Removed ${queueId.length} movies`);
-await sendTelegramMessage(`✅ Removed ${queueId.length} movies`)
+console.log(`✅ Removed ${queueId.length} Episodes`);
+await sendTelegramMessage(`✅ Removed ${queueId.length} Episodes`)
 }
 
 
