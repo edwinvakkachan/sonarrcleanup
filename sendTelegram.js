@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import axios from 'axios';
+import { delay } from './delay.js';
 
 
 const BOT_TOKEN = process.env.TG_BOT_TOKEN;
@@ -18,4 +19,5 @@ export async function sendTelegramMessage(text) {
     chat_id: CHAT_ID,
     text: text
   });
+  await delay(2000,true)
 }

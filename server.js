@@ -88,8 +88,8 @@ async function removingStoppedMOvies(){
     }
 
  if(!queueId.length){
-console.log('✅ no Episodes are paused to remove')
-await sendTelegramMessage('✅ no Episodes are paused to remove')
+console.log('👍 no Episodes are paused to remove')
+await sendTelegramMessage('👍 no Episodes are paused to remove')
 return;
  }
 
@@ -159,11 +159,11 @@ const queueId=[];
 for (const value of data.records){
   await delay(300,true);
   if(!value.downloadId){
-    console.log('Download id doesnot exsist')
+    console.log('❗ Download id doesnot exsist')
     continue;
   }
   if(await qbitorrentStalledFileInfo(value.downloadId)){
-    console.log('found: ',value.title)
+    console.log('☢️ found: ',value.title)
     await sendTelegramMessage(value.title)
     queueId.push(value.id)
 
@@ -171,8 +171,8 @@ for (const value of data.records){
 }
 
 if(!queueId.length){
-  console.log('No stalled and failed metadata Episodes')
-  await sendTelegramMessage('No stalled and failed metadata Episodes')
+  console.log('👍 No stalled and failed metadata Episodes')
+  await sendTelegramMessage('👍 No stalled and failed metadata Episodes')
   return
 }
 
@@ -209,8 +209,8 @@ if (blockedRegex.test(value.outputPath)) {
 }
 await delay(300,true)
 if(!queueId.length){
-  console.log('no files contian exe rar..etc files')
-  await sendTelegramMessage('no files contian exe rar..etc files')
+  console.log('👍 no files contian exe rar..etc files')
+  await sendTelegramMessage('👍 no files contian exe rar..etc files')
   return;
 }
 await fileDelete(queueId);
@@ -221,6 +221,8 @@ await fileDelete(queueId);
 
 async function main() {
   try {
+    await sendTelegramMessage('🍉🍉🍉🍉🍉🍉🍉🍉')
+    console.log('🍉🍉🍉🍉🍉🍉🍉🍉')
     console.log("🚀 sonarr cleanup started");
     await sendTelegramMessage("🚀 sonarr cleanup started")
 
@@ -238,7 +240,9 @@ async function main() {
 
     console.log("🏁 Cleanup completed successfully");
    await sendTelegramMessage("🏁 Cleanup completed successfully")
-    process.exit(0); // ✅ clean exit
+    await sendTelegramMessage('🍉🍉🍉🍉🍉🍉🍉🍉')
+    console.log('🍉🍉🍉🍉🍉🍉🍉🍉')
+   process.exit(0); // ✅ clean exit
   } catch (err) {
     console.error("❌ Cleanup failed: triggering HA webhook", err.message);
    await sendTelegramMessage("❌ Cleanup failed: triggering HA webhook")

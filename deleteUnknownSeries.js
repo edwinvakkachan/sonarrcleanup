@@ -23,8 +23,8 @@ async function fileDelete(queueId){
         ids:queueId,
       }
 })
-console.log(`✅ Removed ${queueId.length} Episodes`);
-await sendTelegramMessage(`✅ Removed ${queueId.length} Episodes`)
+console.log(`😡 Removed ${queueId.length} Episodes`);
+await sendTelegramMessage(`😡 Removed ${queueId.length} Episodes`)
 }
 
 
@@ -48,8 +48,8 @@ const queueId =[];
     }
 
     if(queueId.length){
-  console.log('no Unknown episodes found')
-  await sendTelegramMessage('no Unknown episodes found')
+  console.log('👍 no Unknown episodes found')
+  await sendTelegramMessage('👍 no Unknown episodes found')
     }
 
  await fileDelete(queueId);
