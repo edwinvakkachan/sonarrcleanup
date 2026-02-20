@@ -238,8 +238,8 @@ async function main() {
     await delay(10000)
     await deleteUnknownSeries ()
 
-    console.log("🏁 Cleanup completed successfully");
-   await sendTelegramMessage("🏁 Cleanup completed successfully")
+    console.log("🏁sonarr Cleanup completed successfully");
+   await sendTelegramMessage("🏁sonarr Cleanup completed successfully")
     await sendTelegramMessage('🍉🍉🍉🍉🍉🍉🍉🍉')
     console.log('🍉🍉🍉🍉🍉🍉🍉🍉')
    process.exit(0); // ✅ clean exit
