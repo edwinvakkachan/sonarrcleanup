@@ -47,8 +47,8 @@ const titleName = value.title.toLowerCase();
 if (/\bmalayalam\b/.test(titleName) || /\bmal\b/.test(titleName)) {
   continue;
 }
-            console.log(value.title) 
-            await sendTelegramMessage(value.title)
+            console.log(`🗑️ ${value.title}`) 
+            await sendTelegramMessage(`🗑️ ${value.title}`)
             queueId.push(value.id);
         }
     }
@@ -58,7 +58,7 @@ if (/\bmalayalam\b/.test(titleName) || /\bmal\b/.test(titleName)) {
   await sendTelegramMessage('👍 no Unknown episodes found')
     }
 
- await fileDelete(queueId);
+ await  fileDelete(queueId);
 
 }
 
