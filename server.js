@@ -227,15 +227,15 @@ async function main() {
     await sendTelegramMessage("🚀 sonarr cleanup started")
 
     await login();
-    await delay(5000)
-    await removeExeRarfiles();
-    await delay(10000)
+    await delay(3000)
     await removingStoppedMOvies();
-    await delay(10000)
+    await delay(3000)
+    await removeExeRarfiles();
+    await delay(3000)
     await removingStalledMoviesFailedMetadataDownload()
-    await delay(10000)
+    await delay(3000)
     await deleteRemovedSeries ();
-    await delay(10000)
+    await delay(3000)
     await deleteUnknownSeries ()
 
     console.log("🏁sonarr Cleanup completed successfully");
