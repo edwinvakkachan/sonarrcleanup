@@ -232,11 +232,11 @@ async function main() {
     await delay(3000)
     await removeExeRarfiles();
     await delay(3000)
-    await removingStalledMoviesFailedMetadataDownload()
+    await deleteUnknownSeries ()
     await delay(3000)
     await deleteRemovedSeries ();
     await delay(3000)
-    await deleteUnknownSeries ()
+    await removingStalledMoviesFailedMetadataDownload()
 
     console.log("🏁sonarr Cleanup completed successfully");
    await sendTelegramMessage("🏁sonarr Cleanup completed successfully")
