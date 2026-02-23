@@ -9,6 +9,7 @@ import {deleteUnknownSeries} from './deleteUnknownSeries.js'
 import {sendTelegramMessage} from './sendTelegram.js'
 import {delay} from './delay.js'
 import{triggerHAWebhook} from './webhook.js'
+import { log } from './timelog.js';
 
 
 
@@ -224,6 +225,8 @@ async function main() {
     await sendTelegramMessage('🍉🍉🍉🍉🍉🍉🍉🍉')
     console.log('🍉🍉🍉🍉🍉🍉🍉🍉')
     console.log("🚀 sonarr cleanup started");
+    await log()
+    await sendTelegramMessage(`${new Date().toISOString()}`)
     await sendTelegramMessage("🚀 sonarr cleanup started")
 
     await login();
