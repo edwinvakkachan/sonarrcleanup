@@ -238,8 +238,8 @@ async function main() {
     await delay(3000)
     await removingStalledMoviesFailedMetadataDownload()
 
-    console.log("🏁sonarr Cleanup completed successfully");
-   await sendTelegramMessage("🏁sonarr Cleanup completed successfully")
+    console.log("🏇  sonarr Cleanup completed successfully");
+   await sendTelegramMessage("🏇  sonarr Cleanup completed successfully")
     await sendTelegramMessage('🍉🍉🍉🍉🍉🍉🍉🍉')
     console.log('🍉🍉🍉🍉🍉🍉🍉🍉')
    process.exit(0); // ✅ clean exit
