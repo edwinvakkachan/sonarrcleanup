@@ -225,9 +225,9 @@ async function main() {
     await sendTelegramMessage('🍉🍉🍉🍉🍉🍉🍉🍉')
     console.log('🍉🍉🍉🍉🍉🍉🍉🍉')
     console.log("🚀 sonarr cleanup started");
-    await log()
-    await sendTelegramMessage(`${new Date().toISOString()}`)
     await sendTelegramMessage("🚀 sonarr cleanup started")
+    
+    await log()
 
     await login();
     await delay(3000)
