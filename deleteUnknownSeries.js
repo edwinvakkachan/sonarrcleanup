@@ -45,12 +45,15 @@ const queueId =[];
 const titleName = value.title.toLowerCase();
 
 if (/\bmalayalam\b/.test(titleName) || /\bmal\b/.test(titleName)) {
+  console.log(`please remove malayalam ${titleName}  maually `)
   continue;
 }
 if (/\bhindi\b/.test(titleName) || /\bhin\b/.test(titleName)) {
+ console.log( `please remove hindi ${titleName}  maually `)
   continue;
 }
 if (/\btamil\b/.test(titleName) || /\btam\b/.test(titleName)) {
+  console.log(`please remove tamil ${titleName}  maually `)
   continue;
 }
             console.log(`🗑️ ${value.title}`) 
