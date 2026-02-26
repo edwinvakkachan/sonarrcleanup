@@ -222,10 +222,10 @@ await fileDelete(queueId);
 
 async function main() {
   try {
-    await sendTelegramMessage('🍉🍉🍉🍉🍉🍉🍉🍉')
+    // await sendTelegramMessage('🍉🍉🍉🍉🍉🍉🍉🍉')
     console.log('🍉🍉🍉🍉🍉🍉🍉🍉')
     console.log("🚀 sonarr cleanup started");
-    await sendTelegramMessage("🚀 sonarr cleanup started")
+    // await sendTelegramMessage("🚀 sonarr cleanup started")
     
     await log()
 
@@ -243,7 +243,7 @@ async function main() {
 
     console.log("🏇  sonarr Cleanup completed successfully");
    await sendTelegramMessage("🏇  sonarr Cleanup completed successfully")
-    await sendTelegramMessage('🍉🍉🍉🍉🍉🍉🍉🍉')
+    // await sendTelegramMessage('🍉🍉🍉🍉🍉🍉🍉🍉')
     console.log('🍉🍉🍉🍉🍉🍉🍉🍉')
    process.exit(0); // ✅ clean exit
   } catch (err) {

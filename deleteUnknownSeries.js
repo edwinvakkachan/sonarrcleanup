@@ -89,6 +89,7 @@ export async function deleteUnknownSeries (){
 
     const queueId=[]
     for (const value of responce.data.records){
+      console.log(value.title)
      queueId.push(value.episodeId)
     }
     await delay(3000,true)
