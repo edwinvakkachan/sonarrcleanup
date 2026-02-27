@@ -6,10 +6,11 @@ import { CookieJar } from "tough-cookie";
 
 import {deleteRemovedSeries} from './deleteRemovedseries.js'
 import {deleteUnknownSeries} from './deleteUnknownSeries.js'
-import {sendTelegramMessage} from './sendTelegram.js'
 import {delay} from './delay.js'
-import{triggerHAWebhook} from './webhook.js'
+import { triggerHomeAssistantWebhookWhenErrorOccurs } from './homeassistant/webhook.js';
 import { log } from './timelog.js';
+import { publishMessage } from './queue/publishMessage.js';
+import { retry } from './homeassistant/retrayWrapper.js';
 
 
 
@@ -19,7 +20,7 @@ const qbitTime = process.env.QBIT_TIME;
 const qbitIp = process.env.QBITIP;
 const qbitUserName= process.env.QBITUSER;
 const qbitPassword = process.env.QBITPASS;
-const homeassistantWebHook = process.env.HOMEASSISTANTWEBHOOK;
+
 
 const blockedRegex = /\.(exe|rar|iso|zip|bat)(\s|$)/i;
 
@@ -56,7 +57,9 @@ async function fileDelete(queueId){
       }
 })
 console.log(`✅ Removed ${queueId.length} Episodes`);
-await sendTelegramMessage(`✅ Removed ${queueId.length} Episodes`)
+    await publishMessage({
+  message: `✅ Removed ${queueId.length} Episodes`
+});
 }
 
 
@@ -66,7 +69,10 @@ await sendTelegramMessage(`✅ Removed ${queueId.length} Episodes`)
 //removing stopped movies
 async function removingStoppedMOvies(){
   console.log('🔍started to removing the stopped Episodes')
-  await sendTelegramMessage('🔍started to removing the stopped Episodes')
+
+      await publishMessage({
+  message: '🔍started to removing the stopped Episodes'
+});
  const responce =  await axios.get(`${ip}/api/v3/queue`,{
          headers: {
         "X-Api-Key": api
@@ -90,7 +96,10 @@ async function removingStoppedMOvies(){
 
  if(!queueId.length){
 console.log('👍 no Episodes are paused to remove')
-await sendTelegramMessage('👍 no Episodes are paused to remove')
+
+    await publishMessage({
+  message: '👍 no Episodes are paused to remove'
+});
 return;
  }
 
@@ -139,7 +148,10 @@ async function qbitorrentStalledFileInfo(downloadId){
 
 async function removingStalledMoviesFailedMetadataDownload(){
    console.log('🔍started to removing Stalled and FailedMetadata Download Episodes')
-   await sendTelegramMessage('🔍started to removing Stalled and FailedMetadata Download Episodes')
+  
+       await publishMessage({
+  message: '🔍started to removing Stalled and FailedMetadata Download Episodes'
+});
  const {data} =  await axios.get(`${ip}/api/v3/queue`,{
          headers: {
         "X-Api-Key": api
@@ -165,7 +177,10 @@ for (const value of data.records){
   }
   if(await qbitorrentStalledFileInfo(value.downloadId)){
     console.log('☢️ found: ',value.title)
-    await sendTelegramMessage(value.title)
+    
+        await publishMessage({
+  message: `☢️ found:  value.title`
+});
     queueId.push(value.id)
 
   }
@@ -173,7 +188,9 @@ for (const value of data.records){
 
 if(!queueId.length){
   console.log('👍 No stalled and failed metadata Episodes')
-  await sendTelegramMessage('👍 No stalled and failed metadata Episodes')
+      await publishMessage({
+  message: '👍 No stalled and failed metadata Episodes'
+});
   return
 }
 
@@ -183,7 +200,10 @@ await fileDelete(queueId)
 
 async function removeExeRarfiles(){
    console.log("🔍 Removing Episodes that has exe,rar or iso files");
-   await sendTelegramMessage("🔍 Removing Episodes that has exe,rar or iso files")
+
+       await publishMessage({
+  message:"🔍 Removing Episodes that has exe,rar or iso files" 
+});
 
     const {data} =  await axios.get(`${ip}/api/v3/queue`,{
          headers: {
@@ -204,14 +224,18 @@ for (const value of data.records){
 
 if (blockedRegex.test(value.outputPath)) {
   console.log('❌ Blocked file detected:', value.title);
-  await sendTelegramMessage(value.title)
+      await publishMessage({
+  message: `❌ Blocked file detected:${value.title}`
+});
   queueId.push(value.id)
 }
 }
 await delay(300,true)
 if(!queueId.length){
   console.log('👍 no files contian exe rar..etc files')
-  await sendTelegramMessage('👍 no files contian exe rar..etc files')
+      await publishMessage({
+  message: '👍 no files contian exe rar..etc files'
+});
   return;
 }
 await fileDelete(queueId);
@@ -222,12 +246,13 @@ await fileDelete(queueId);
 
 async function main() {
   try {
-    // await sendTelegramMessage('🍉🍉🍉🍉🍉🍉🍉🍉')
-    console.log('🍉🍉🍉🍉🍉🍉🍉🍉')
+ await log();
     console.log("🚀 sonarr cleanup started");
-    // await sendTelegramMessage("🚀 sonarr cleanup started")
+        await publishMessage({
+  message: "🚀 sonarr cleanup started"
+});
     
-    await log()
+   
 
     await login();
     await delay(3000)
@@ -242,14 +267,25 @@ async function main() {
     await removingStalledMoviesFailedMetadataDownload()
 
     console.log("🏇  sonarr Cleanup completed successfully");
-   await sendTelegramMessage("🏇  sonarr Cleanup completed successfully")
-    // await sendTelegramMessage('🍉🍉🍉🍉🍉🍉🍉🍉')
+
+       await publishMessage({
+  message: "🏇  sonarr Cleanup completed successfully"
+});
+
+        await publishMessage({
+  message: '🍉🍉🍉🍉🍉🍉🍉🍉'
+});
     console.log('🍉🍉🍉🍉🍉🍉🍉🍉')
    process.exit(0); // ✅ clean exit
   } catch (err) {
     console.error("❌ Cleanup failed: triggering HA webhook", err.message);
-   await sendTelegramMessage("❌ Cleanup failed: triggering HA webhook")
-   await triggerHAWebhook('worked')
+      
+    await retry(
+  triggerHomeAssistantWebhookWhenErrorOccurs,
+  { status: "error" },
+  "homeassistant-error",
+  5
+);
     process.exit(1); // ❌ failure exit
   }
 }

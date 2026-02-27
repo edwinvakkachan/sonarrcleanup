@@ -5,7 +5,8 @@ dotenv.config();
 const ip = process.env.IP;
 const api = process.env.API;
 
-import {sendTelegramMessage} from './sendTelegram.js'
+
+import { publishMessage } from './queue/publishMessage.js';
 import { delay } from './delay.js';
 
 async function fileDelete(queueId){
@@ -24,7 +25,10 @@ async function fileDelete(queueId){
       }
 })
 console.log(`😡 Removed ${queueId.length} Episodes`);
-await sendTelegramMessage(`😡 Removed ${queueId.length} Episodes`)
+
+        await publishMessage({
+  message: `😡 Removed ${queueId.length} Episodes`
+});
 }
 
 
@@ -57,14 +61,19 @@ if (/\btamil\b/.test(titleName) || /\btam\b/.test(titleName)) {
   continue;
 }
             console.log(`🗑️ ${value.title}`) 
-            await sendTelegramMessage(`🗑️ ${value.title}`)
+                    await publishMessage({
+  message: `🗑️ ${value.title}`
+});
             queueId.push(value.id);
         }
     }
 
     if(queueId.length){
   console.log('👍 no Unknown episodes found')
-  await sendTelegramMessage('👍 no Unknown episodes found')
+ 
+          await publishMessage({
+  message: '👍 no Unknown episodes found'
+});
     }
 
  await  fileDelete(queueId);
@@ -74,7 +83,10 @@ if (/\btamil\b/.test(titleName) || /\btam\b/.test(titleName)) {
 
 export async function deleteUnknownSeries (){
     console.log('🔍started to removing Unknown episodes')
-  await sendTelegramMessage('🔍started to removing Unknown episodes')
+
+          await publishMessage({
+  message: '🔍started to removing Unknown episodes'
+});
  const responce =  await axios.get(`${ip}/api/v3/queue`,{
          headers: {
         "X-Api-Key": api

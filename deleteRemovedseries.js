@@ -2,7 +2,8 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 dotenv.config();
 
-import {sendTelegramMessage} from './sendTelegram.js'
+
+import { publishMessage } from './queue/publishMessage.js';
 
 const ip = process.env.IP;
 const api = process.env.API;
@@ -35,7 +36,9 @@ async function fileDelete(queueId){
       }
 })
 console.log(`😡 Removed ${queueId.length} Episodes`);
-await sendTelegramMessage(`😡 Removed ${queueId.length} Episodes`)
+        await publishMessage({
+  message: `😡 Removed ${queueId.length} Episodes`
+});
 }
 
 
@@ -56,28 +59,32 @@ const queueId =[];
 const titleName = value.title.toLowerCase();
 
 if (/\bmalayalam\b/.test(titleName) || /\bmal\b/.test(titleName)) {
-  console.log(`please remove malayalam ${titleName}  maually `)
+  console.log(`🥵 please remove malayalam ${titleName}  maually `)
   continue;
 }
 if (/\bhindi\b/.test(titleName) || /\bhin\b/.test(titleName)) {
- console.log( `please remove hindi ${titleName}  maually `)
+ console.log( `🥵 please remove hindi ${titleName}  maually `)
   continue;
 }
 if (/\btamil\b/.test(titleName) || /\btam\b/.test(titleName)) {
-  console.log(`please remove tamil ${titleName}  maually `)
+  console.log( `🥵 please remove tamil ${titleName}  maually `)
   continue;
 }
 
 
             console.log(value.title)
-            await sendTelegramMessage(value.title);
+                    await publishMessage({
+  message: value.title
+});
             queueId.push(value.id);
         }
     }
 
     if(queueId.length){
         console.log('👍 no Episodes need to manually remove ')
-        await sendTelegramMessage('👍 no Episodes need to manually remove')
+                await publishMessage({
+  message: '👍 no Episodes need to manually remove'
+});
     }
 
 await fileDelete(queueId);
@@ -87,7 +94,9 @@ await fileDelete(queueId);
 
  export async function deleteRemovedSeries (){
     console.log('🔍 started to removing the manually deleted Episodes')
-  await sendTelegramMessage('🔍 started to removing the manually deleted Episodes')
+          await publishMessage({
+  message: '🔍 started to removing the manually deleted Episodes'
+});
  const responce =  await axios.get(`${ip}/api/v3/queue`,{
          headers: {
         "X-Api-Key": api
