@@ -272,10 +272,7 @@ async function main() {
   message: "🏇  sonarr Cleanup completed successfully"
 });
 
-        await publishMessage({
-  message: '🍉🍉🍉🍉🍉🍉🍉🍉'
-});
-    console.log('🍉🍉🍉🍉🍉🍉🍉🍉')
+await log()
    process.exit(0); // ✅ clean exit
   } catch (err) {
     console.error("❌ Cleanup failed: triggering HA webhook", err.message);
