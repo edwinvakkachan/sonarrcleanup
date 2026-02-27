@@ -49,15 +49,24 @@ const queueId =[];
 const titleName = value.title.toLowerCase();
 
 if (/\bmalayalam\b/.test(titleName) || /\bmal\b/.test(titleName)) {
-  console.log(`please remove malayalam ${titleName}  maually `)
+  console.log(`🥵 please remove malayalam ${titleName}  manually `)
+          await publishMessage({
+  message: `🥵 please remove malayalam ${titleName}  manually ` 
+});
   continue;
 }
 if (/\bhindi\b/.test(titleName) || /\bhin\b/.test(titleName)) {
- console.log( `please remove hindi ${titleName}  maually `)
+ console.log( `🥵 please remove hindi ${titleName}  manually `)
+           await publishMessage({
+  message: `🥵 please remove hindi ${titleName}  manually `
+});
   continue;
 }
 if (/\btamil\b/.test(titleName) || /\btam\b/.test(titleName)) {
-  console.log(`please remove tamil ${titleName}  maually `)
+  console.log(`🥵 please remove tamil ${titleName}  manually `)
+            await publishMessage({
+  message: `🥵 please remove tamil ${titleName}  manually `
+});
   continue;
 }
             console.log(`🗑️ ${value.title}`) 
