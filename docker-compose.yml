@@ -14,7 +14,9 @@ services:
       QBITPASS: ${QBITPASS}
       HOMEASSISTANTWEBHOOK: ${HOMEASSISTANTWEBHOOK}
       DATABASE_URL: ${DATABASE_URL}
-
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
 
 
 
