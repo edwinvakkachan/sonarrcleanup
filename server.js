@@ -179,7 +179,7 @@ for (const value of data.records){
     console.log('☢️ found: ',value.title)
     
         await publishMessage({
-  message: `☢️ found:  value.title`
+  message: `☢️ found:  ${value.title}`
 });
     queueId.push(value.id)
 
