@@ -22,7 +22,7 @@ const qbitUserName= process.env.QBITUSER;
 const qbitPassword = process.env.QBITPASS;
 
 
-const blockedRegex = /\.(exe|rar|iso|zip|bat)(\s|$)/i;
+const blockedRegex = /\.(exe|rar|iso|zip|bat|scr)(\s|$)/i;
 
 
 
