@@ -172,20 +172,20 @@ const queueId=[];
 for (const value of data.records){
   await delay(300,true);
   if(!value.downloadId){
-    console.log('❗ Download id doesnot exsist')
+    console.log('❗ Download id doesnot exsist for tvshow episode')
     continue;
   }
 
  if (/malayalam|mal|hindi|hin|tamil|tam/i.test(value.title.toLowerCase())){
-  console.log(`☢️  stalled movie, please remove manually ${value.title} `)
+  console.log(`☢️  stalled tvshow episode, please remove manually ${value.title} `)
   continue;
  }
 
   if(await qbitorrentStalledFileInfo(value.downloadId)){
-    console.log('☢️ stalled movie, removing : ',value.title)
+    console.log('☢️ stalled tvshow episode, removing : ',value.title)
     
         await publishMessage({
-  message: `☢️ stalled movie, removing :  ${value.title}`
+  message: `☢️ stalled tvshow episode, removing :  ${value.title}`
 });
     queueId.push(value.id)
 
