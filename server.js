@@ -175,11 +175,17 @@ for (const value of data.records){
     console.log('❗ Download id doesnot exsist')
     continue;
   }
+
+ if (/malayalam|mal|hindi|hin|tamil|tam/i.test(value.title.toLowerCase())){
+  console.log(`☢️  stalled movie, please remove manually ${value.title} `)
+  continue;
+ }
+
   if(await qbitorrentStalledFileInfo(value.downloadId)){
-    console.log('☢️ found: ',value.title)
+    console.log('☢️ stalled movie, removing : ',value.title)
     
         await publishMessage({
-  message: `☢️ found:  ${value.title}`
+  message: `☢️ stalled movie, removing :  ${value.title}`
 });
     queueId.push(value.id)
 

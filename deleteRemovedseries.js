@@ -35,9 +35,9 @@ async function fileDelete(queueId){
         ids:queueId,
       }
 })
-console.log(`😡 Removed ${queueId.length} Episodes`);
+console.log(`😡 Removed Total ${queueId.length} Episodes`);
         await publishMessage({
-  message: `😡 Removed ${queueId.length} Episodes`
+  message: `😡 Removed total ${queueId.length} Episodes`
 });
 }
 
@@ -59,15 +59,15 @@ const queueId =[];
 const titleName = value.title.toLowerCase();
 
 if (/\bmalayalam\b/.test(titleName) || /\bmal\b/.test(titleName)) {
-  console.log(`🥵 please remove malayalam ${titleName}  maually `)
+  console.log(`🥵 please remove malayalam tvshows${titleName}  manually `)
   continue;
 }
 if (/\bhindi\b/.test(titleName) || /\bhin\b/.test(titleName)) {
- console.log( `🥵 please remove hindi ${titleName}  maually `)
+ console.log( `🥵 please remove hindi tvshows ${titleName}  manually `)
   continue;
 }
 if (/\btamil\b/.test(titleName) || /\btam\b/.test(titleName)) {
-  console.log( `🥵 please remove tamil ${titleName}  maually `)
+  console.log( `🥵 please remove tamil tvshows ${titleName}  manually `)
   continue;
 }
 
@@ -81,9 +81,9 @@ if (/\btamil\b/.test(titleName) || /\btam\b/.test(titleName)) {
     }
 
     if(queueId.length){
-        console.log('👍 no Episodes need to manually remove ')
+        console.log('👍 No tvshows Episodes need to manually remove ')
                 await publishMessage({
-  message: '👍 no Episodes need to manually remove'
+  message: '👍 No tvshows Episodes need to manually remove'
 });
     }
 
@@ -93,9 +93,9 @@ await fileDelete(queueId);
 
 
  export async function deleteRemovedSeries (){
-    console.log('🔍 started to removing the manually deleted Episodes')
+    console.log('🔍 started to removing the manually deleted Tv shows form sonarr ')
           await publishMessage({
-  message: '🔍 started to removing the manually deleted Episodes'
+  message: '🔍 started to removing the manually deleted Tv shows form sonarr '
 });
  const responce =  await axios.get(`${ip}/api/v3/queue`,{
          headers: {

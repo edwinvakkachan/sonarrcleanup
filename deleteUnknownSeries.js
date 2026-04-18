@@ -24,10 +24,10 @@ async function fileDelete(queueId){
         ids:queueId,
       }
 })
-console.log(`😡 Removed ${queueId.length} Episodes`);
+console.log(`😡 Removed Total ${queueId.length} Episodes`);
 
         await publishMessage({
-  message: `😡 Removed ${queueId.length} Episodes`
+  message: `😡 Removed Total ${queueId.length} Episodes`
 });
 }
 
@@ -49,39 +49,39 @@ const queueId =[];
 const titleName = value.title.toLowerCase();
 
 if (/\bmalayalam\b/.test(titleName) || /\bmal\b/.test(titleName)) {
-  console.log(`🥵 please remove malayalam ${titleName}  manually `)
+  console.log(`🥵 please remove unknown tvshow malayalam ${titleName}  manually `)
           await publishMessage({
-  message: `🥵 please remove malayalam ${titleName}  manually ` 
+  message: `🥵 please remove unknown tvshow malayalam ${titleName}  manually ` 
 });
   continue;
 }
 if (/\bhindi\b/.test(titleName) || /\bhin\b/.test(titleName)) {
- console.log( `🥵 please remove hindi ${titleName}  manually `)
+ console.log( `🥵 please remove unknown tvshow hindi ${titleName}  manually `)
            await publishMessage({
-  message: `🥵 please remove hindi ${titleName}  manually `
+  message: `🥵 please remove unknown tvshow hindi ${titleName}  manually `
 });
   continue;
 }
 if (/\btamil\b/.test(titleName) || /\btam\b/.test(titleName)) {
-  console.log(`🥵 please remove tamil ${titleName}  manually `)
+  console.log(`🥵 please remove unknown tvshow tamil ${titleName}  manually `)
             await publishMessage({
-  message: `🥵 please remove tamil ${titleName}  manually `
+  message: `🥵 please remove unknown tvshow tamil ${titleName}  manually `
 });
   continue;
 }
-            console.log(`🗑️ ${value.title}`) 
+            console.log(`🗑️ deleted  ${value.title}`) 
                     await publishMessage({
-  message: `🗑️ ${value.title}`
+  message: `🗑️ deleted ${value.title}`
 });
             queueId.push(value.id);
         }
     }
 
     if(queueId.length){
-  console.log('👍 no Unknown episodes found')
+  console.log('👍 No  unknown tvshow episodes found')
  
           await publishMessage({
-  message: '👍 no Unknown episodes found'
+  message: '👍 No unknown tvshow episodes found'
 });
     }
 
