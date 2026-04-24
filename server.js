@@ -135,7 +135,7 @@ async function qbitorrentStalledFileInfo(downloadId){
         console.log(`✅ YES stalled Movie time: ${Math.round(value.time_active/3600)}hrs` )
         return true
       }
-      else if(value.downloaded==0 && value.has_metadata==false && value.time_active >= 1200 && value.availability==0){
+      else if(value.downloaded==0 && value.has_metadata==false && value.time_active >= 600 && value.availability==0){
  console.log(`✅ YES failed metadata movie ` )
         return true
       }
