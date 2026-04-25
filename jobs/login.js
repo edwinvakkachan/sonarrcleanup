@@ -1,0 +1,33 @@
+import config from "../config.js";
+import axios from 'axios';
+import { wrapper } from "axios-cookiejar-support";
+import { CookieJar } from "tough-cookie";
+
+
+
+const jar = new CookieJar();
+
+export const qb = wrapper(
+  axios.create({
+    baseURL: config.qbitIp,
+    jar,
+    withCredentials: true
+  })
+);
+
+
+export async function login() {
+  const res = await qb.post(
+    "/api/v2/auth/login",
+    new URLSearchParams({
+      username: config.qbitUserName,
+      password: config.qbitPassword
+    })
+  );
+
+  if (res.data !== "Ok.") {
+    throw new Error("Login failed");
+  }
+
+  console.log("✅ Logged into qBittorrent");
+}

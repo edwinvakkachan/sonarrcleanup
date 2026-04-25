@@ -1,21 +1,16 @@
 
-import axios from 'axios';
-import dotenv from 'dotenv';
-dotenv.config();
-
-
-const HA_WEBHOOKError_URL = process.env.HOMEASSISTANTWEBHOOK;
-
+import config from "../../config.js";
+import axios from "axios";
 
 export async function triggerHomeAssistantWebhookWhenErrorOccurs(payload = {}) {
  
-  if (!HA_WEBHOOKError_URL) {
+  if (!config.HOMEASSISTANTWEBHOOK) {
     throw new Error("HA_WEBHOOKError_URL not set");
   }
 
   try {
     const response = await axios.post(
-      HA_WEBHOOKError_URL,
+      config.HOMEASSISTANTWEBHOOK,
       payload,
       {
         headers: { "Content-Type": "application/json" },

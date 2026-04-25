@@ -1,29 +1,16 @@
 import axios from 'axios';
-import dotenv from 'dotenv';
-dotenv.config();
+import config from '../config.js';
+import { publishMessage } from '../services/publishMessage.js';
+import { delay } from '../utils/delay.js';
 
 
-import { publishMessage } from './queue/publishMessage.js';
 
-const ip = process.env.IP;
-const api = process.env.API;
-
-async function delay(ms,noLog) {
-  if(noLog){
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-  else{
-console.log(`Waiting...${ms} sec`);
-  return new Promise(resolve => setTimeout(resolve, ms));
-  }
-   
-}
 
 
 async function fileDelete(queueId){
-   await axios.delete(`${ip}/api/v3/queue/bulk`,{
+   await axios.delete(`${config.ip}/api/v3/queue/bulk`,{
     headers: {
-        "X-Api-Key": api
+        "X-Api-Key": config.api
       },
       params:{
         removeFromClient:true,
@@ -43,9 +30,9 @@ console.log(`😡 Removed Total ${queueId.length} Episodes`);
 
 
 async function getepisodeDetails(epsodeid){
-    const responce =  await axios.get(`${ip}/api/v3/queue/details`,{
+    const responce =  await axios.get(`${config.ip}/api/v3/queue/details`,{
          headers: {
-        "X-Api-Key": api
+        "X-Api-Key": config.api
       },
       params: {
         episodeIds: epsodeid,
@@ -97,9 +84,9 @@ await fileDelete(queueId);
           await publishMessage({
   message: '🔍 started to removing the manually deleted Tv shows form sonarr '
 });
- const responce =  await axios.get(`${ip}/api/v3/queue`,{
+ const responce =  await axios.get(`${config.ip}/api/v3/queue`,{
          headers: {
-        "X-Api-Key": api
+        "X-Api-Key": config.api
       },
       params: {
         page: 1,

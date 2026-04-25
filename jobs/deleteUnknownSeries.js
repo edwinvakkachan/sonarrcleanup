@@ -1,18 +1,15 @@
 import axios from 'axios';
-import dotenv from 'dotenv';
-dotenv.config();
-
-const ip = process.env.IP;
-const api = process.env.API;
+import config from '../config.js';
+import { delay } from '../utils/delay.js';
+import { publishMessage } from '../services/publishMessage.js';
 
 
-import { publishMessage } from './queue/publishMessage.js';
-import { delay } from './delay.js';
+
 
 async function fileDelete(queueId){
-   await axios.delete(`${ip}/api/v3/queue/bulk`,{
+   await axios.delete(`${config.ip}/api/v3/queue/bulk`,{
     headers: {
-        "X-Api-Key": api
+        "X-Api-Key": config.api
       },
       params:{
         removeFromClient:true,
@@ -33,9 +30,9 @@ console.log(`😡 Removed Total ${queueId.length} Episodes`);
 
 
 async function getepisodeDetails(epsodeid){
-    const responce =  await axios.get(`${ip}/api/v3/queue/details`,{
+    const responce =  await axios.get(`${config.ip}/api/v3/queue/details`,{
          headers: {
-        "X-Api-Key": api
+        "X-Api-Key": config.api
       },
       params: {
         episodeIds: epsodeid,
@@ -96,9 +93,9 @@ export async function deleteUnknownSeries (){
           await publishMessage({
   message: '🔍started to removing Unknown episodes'
 });
- const responce =  await axios.get(`${ip}/api/v3/queue`,{
+ const responce =  await axios.get(`${config.ip}/api/v3/queue`,{
          headers: {
-        "X-Api-Key": api
+        "X-Api-Key": config.api
       },
       params: {
         page: 1,

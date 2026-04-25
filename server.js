@@ -1,129 +1,26 @@
-import dotenv from 'dotenv';
-dotenv.config();
-import axios from 'axios';
-import { wrapper } from "axios-cookiejar-support";
-import { CookieJar } from "tough-cookie";
-
-import {deleteRemovedSeries} from './deleteRemovedseries.js'
-import {deleteUnknownSeries} from './deleteUnknownSeries.js'
-import {delay} from './delay.js'
-import { triggerHomeAssistantWebhookWhenErrorOccurs } from './homeassistant/webhook.js';
-import { log } from './timelog.js';
-import { publishMessage } from './queue/publishMessage.js';
-import { retry } from './homeassistant/retrayWrapper.js';
 
 
+// import {deleteRemovedSeries} from './jobs/deleteRemovedseries.js'
+// import {deleteUnknownSeries} from './jobs/deleteUnknownSeries.js'
+// import {delay} from './delay.js'
+// import { triggerHomeAssistantWebhookWhenErrorOccurs } from './homeassistant/webhook.js';
+// import { log } from './timelog.js';
+// import { publishMessage } from './queue/publishMessage.js';
+// import { retry } from './homeassistant/retrayWrapper.js';
 
-const api = process.env.API;
-const ip = process.env.IP;
-const qbitTime = process.env.QBIT_TIME;
-const qbitIp = process.env.QBITIP;
-const qbitUserName= process.env.QBITUSER;
-const qbitPassword = process.env.QBITPASS;
+import { login } from "./jobs/login.js";
+import { delay } from "./utils/delay.js";
+import { log } from "./utils/timelog.js";
+import { triggerHomeAssistantWebhookWhenErrorOccurs} from "./services/homeassistant/webhook.js";
+import { retry } from "./services/homeassistant/retrayWrapper.js";
+import { publishMessage } from "./services/publishMessage.js";
+import { removingStoppedshows } from "./jobs/removingStoppedshows.js";
+import { removeExeRarfiles } from "./jobs/removeExeRarfiles.js";
+import { deleteUnknownSeries } from "./jobs/deleteUnknownSeries.js";
+import { deleteRemovedSeries } from "./jobs/deleteRemovedseries.js";
+import { removingStalledShows } from "./jobs/removingStalledshows.js";
+import { removingFailedMetadatashows } from "./jobs/removingFailedMetadatashows.js";
 
-
-const blockedRegex = /\.(exe|rar|iso|zip|bat|scr)(\s|$)/i;
-
-
-
-//qbit login
-const jar = new CookieJar();
-const qb = wrapper(axios.create({
-  baseURL: qbitIp, // qBittorrent Web UI
-  jar,
-  withCredentials: true
-}));
-
-if (!api || !ip) {
-  console.error("❌ Missing API or IP environment variables");
-  process.exit(1);
-}
-
-
-// function to delete files
-async function fileDelete(queueId){
-   await axios.delete(`${ip}/api/v3/queue/bulk`,{
-    headers: {
-        "X-Api-Key": api
-      },
-      params:{
-        removeFromClient:true,
-        blocklist:true,
-        skipRedownload:false,
-        changeCategory:false
-      },
-      data:{
-        ids:queueId,
-      }
-})
-console.log(`✅ Removed ${queueId.length} Episodes`);
-    await publishMessage({
-  message: `✅ Removed ${queueId.length} Episodes`
-});
-}
-
-
-
-//---------------------------------------------------
-
-//removing stopped movies
-async function removingStoppedMOvies(){
-  console.log('🔍started to removing the stopped Episodes')
-
-      await publishMessage({
-  message: '🔍started to removing the stopped Episodes'
-});
- const responce =  await axios.get(`${ip}/api/v3/queue`,{
-         headers: {
-        "X-Api-Key": api
-      },
-      params: {
-        page: 1,
-        pageSize: 500,
-        sortDirection: "default",
-        includeUnknownMovieItems: true,
-        includeMovie: true,
-        protocol: "torrent",
-      }
-    })
-    const queueId=[]
-    for (const value of responce.data.records){
-      if(value.status == 'paused'){
-        queueId.push(value.id)
-        console.log(value.title);
-      }
-    }
-
- if(!queueId.length){
-console.log('👍 no Episodes are paused to remove')
-
-    await publishMessage({
-  message: '👍 no Episodes are paused to remove'
-});
-return;
- }
-
- await delay(1000,true)
- await fileDelete(queueId);    
-}
-
-//removing the stalled movies ....................
-
-async function login() {
-  const res = await qb.post(
-    "/api/v2/auth/login",
-    new URLSearchParams({
-      username: qbitUserName,
-      password: qbitPassword
-    })
-  );
-
-  if (res.data !== "Ok.") {
-    throw new Error("Login failed");
-  }
-
-  console.log("✅ Logged into qBittorrent");
-}
 
 async function qbitorrentStalledFileInfo(downloadId){
   const {data} = await qb.get('/api/v2/torrents/info',{
@@ -133,14 +30,29 @@ async function qbitorrentStalledFileInfo(downloadId){
      for (const value of data){
         if(value.time_active>=qbitTime){
         console.log(`✅ YES stalled Movie time: ${Math.round(value.time_active/3600)}hrs` )
-        return true
+        return {
+          value:true,
+          stalled:true,
+          time:value.time_active,
+          metadatafail:false
+        }
       }
       else if(value.downloaded==0 && value.has_metadata==false && value.time_active >= 600 && value.availability==0){
  console.log(`✅ YES failed metadata movie ` )
-        return true
+        return {
+          value:true,
+          stalled:false,
+          time:value.time_active,
+          metadatafail:true
+        }
       }
       else {
-        return false
+        return {
+          value:false,
+          stalled:false,
+          time:value.time_active,
+          metadatafail:false
+        }
       } 
      }
 }
@@ -175,13 +87,21 @@ for (const value of data.records){
     console.log('❗ Download id doesnot exsist for tvshow episode')
     continue;
   }
-
- if (/malayalam|mal|hindi|hin|tamil|tam/i.test(value.title.toLowerCase())){
+//skippping indian regional laguages
+  if (/malayalam|mal|hindi|hin|tamil|tam/i.test(value.title.toLowerCase())){
   console.log(`☢️  stalled tvshow episode, please remove manually ${value.title} `)
   continue;
  }
-
-  if(await qbitorrentStalledFileInfo(value.downloadId)){
+  
+if(value.status=='warning' && value.errorMessage=='The download is stalled with no connections'){
+const result = await qbitorrentStalledFileInfo(value.downloadId)
+if(result.value==true && result.stalled==true){
+  
+}
+}
+ 
+const result = await qbitorrentStalledFileInfo(value.downloadId)
+  if(result.value==true){
     console.log('☢️ stalled tvshow episode, removing : ',value.title)
     
         await publishMessage({
@@ -191,6 +111,8 @@ for (const value of data.records){
 
   }
 }
+
+
 
 if(!queueId.length){
   console.log('👍 No stalled and failed metadata Episodes')
@@ -204,49 +126,7 @@ await fileDelete(queueId)
 
 }
 
-async function removeExeRarfiles(){
-   console.log("🔍 Removing Episodes that has exe,rar or iso files");
 
-       await publishMessage({
-  message:"🔍 Removing Episodes that has exe,rar or iso files" 
-});
-
-    const {data} =  await axios.get(`${ip}/api/v3/queue`,{
-         headers: {
-        "X-Api-Key": api
-      },
-      params: {
-        page: 1,
-        pageSize: 500,
-        sortDirection: "default",
-        includeUnknownMovieItems: true,
-        includeMovie: true,
-        protocol: "torrent",
-      }
-    })
-
-    const queueId=[];
-for (const value of data.records){
-
-if (blockedRegex.test(value.outputPath)) {
-  console.log('❌ Blocked file detected:', value.title);
-      await publishMessage({
-  message: `❌ Blocked file detected:${value.title}`
-});
-  queueId.push(value.id)
-}
-}
-await delay(300,true)
-if(!queueId.length){
-  console.log('👍 no files contian exe rar..etc files')
-      await publishMessage({
-  message: '👍 no files contian exe rar..etc files'
-});
-  return;
-}
-await fileDelete(queueId);
-
-}
 
 
 
@@ -262,7 +142,7 @@ async function main() {
 
     await login();
     await delay(3000)
-    await removingStoppedMOvies();
+    await removingStoppedshows();
     await delay(3000)
     await removeExeRarfiles();
     await delay(3000)
@@ -270,7 +150,10 @@ async function main() {
     await delay(3000)
     await deleteRemovedSeries ();
     await delay(3000)
-    await removingStalledMoviesFailedMetadataDownload()
+    await removingStalledShows();
+    await delay(3000)
+    await removingFailedMetadatashows();
+
 
     console.log("🏇  sonarr Cleanup completed successfully");
 

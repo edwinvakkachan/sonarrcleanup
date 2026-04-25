@@ -1,11 +1,10 @@
 import pkg from "pg";
+import config from "../config.js";
 const { Pool } = pkg;
 
-import dotenv from 'dotenv';
-dotenv.config();
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: config.DATABASE_URL,
   ssl: { rejectUnauthorized: false },
   max: 10,
   idleTimeoutMillis: 30000,

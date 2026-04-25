@@ -1,5 +1,4 @@
-
-import { publishMessage } from "./queue/publishMessage.js";
+import { publishMessage } from "../services/publishMessage.js";
 
 export async function log(message='⌚') {
   const time = new Date().toLocaleString('en-IN', {
