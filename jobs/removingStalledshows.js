@@ -81,7 +81,7 @@ resetQueue.push(value.downloadId)
 }
 
 if(resetQueue.length>0){
-  console.log(`moving stalled shows to bottom, count: ${resetQueue.length}`)
+  console.log(`Moving stalled shows to bottom, count: ${resetQueue.length}`)
     await qb.post('/api/v2/torrents/bottomPrio', new URLSearchParams({
   hashes: resetQueue.join('|')
 }))
