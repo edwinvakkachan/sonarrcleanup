@@ -9,10 +9,33 @@ async function qbitorrentStalledFileInfo(downloadId){
   const {data} = await qb.get('/api/v2/torrents/info',{
     params: { hashes: downloadId.toLowerCase() }
   });
- 
+ let shows ={};
      for (const value of data){
-        if(value.time_active>=config.qbitTime){
-        console.log(`✅ YES stalled Movie time: ${Math.round(value.time_active/3600)}hrs` )
+
+shows ={
+          name:value.name,
+          state:value.state,
+          progress:value.progress,
+          availability:value.availability,
+          seeders:value.num_seeds,
+          dlspeed:value.dlspeed
+         };
+
+if (value.time_active>=1800 
+          && value.state=='stalledDL' 
+          && value.progress<0.1
+          && value.availability === 0
+          && value.num_seeds === 0 
+          && value.dlspeed === 0){
+            console.log(`✅ Found dead torrent` )
+        return {
+          value:true,
+          time:value.time_active
+        }
+}
+
+       else if(value.time_active>=config.qbitTime){
+        console.log(`✅ YES stalled tvShow time: ${Math.round(value.time_active/3600)}hrs` )
         return {
           value:true,
           time:value.time_active
