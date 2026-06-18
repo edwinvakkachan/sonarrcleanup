@@ -32,10 +32,10 @@ async function main() {
     await delay(3000)
     await removeExeRarfiles();
     await delay(3000)
-    await deleteUnknownSeries ()
-    await delay(3000)
-    await deleteRemovedSeries ();
-    await delay(3000)
+    // await deleteUnknownSeries ()
+    // await delay(3000)
+    // await deleteRemovedSeries ();
+    // await delay(3000)
     await removingStalledShows();
     await delay(3000)
     await removingFailedMetadatashows();
